@@ -1,8 +1,6 @@
 <script setup lang="ts">
 /**
- * 整体布局组件
- * 导航栏 + 主内容区 + 页脚
- * 所有路由页面均在此布局内渲染
+ * 用户端整体布局组件
  */
 import NavBar from './NavBar.vue'
 import Footer from './Footer.vue'

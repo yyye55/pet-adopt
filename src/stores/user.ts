@@ -9,11 +9,14 @@ import { getStorage, setStorage, removeStorage } from '@/utils/storage'
 const USER_KEY = 'yt_user_info'
 const TOKEN_KEY = 'yt_token'
 
+export type UserRole = 'user' | 'admin'
+
 export interface UserInfo {
   id: number
   nickname: string
   phone: string
   avatar: string
+  role: UserRole
 }
 
 export const useUserStore = defineStore('user', () => {
@@ -23,6 +26,7 @@ export const useUserStore = defineStore('user', () => {
 
   // ---------- getters ----------
   const isLogin = computed(() => !!token.value)
+  const isAdmin = computed(() => userInfo.value?.role === 'admin')
 
   // ---------- actions ----------
   /** 登录成功后保存用户信息 */
@@ -41,5 +45,5 @@ export const useUserStore = defineStore('user', () => {
     removeStorage(TOKEN_KEY)
   }
 
-  return { userInfo, token, isLogin, login, logout }
+  return { userInfo, token, isLogin, isAdmin, login, logout }
 })

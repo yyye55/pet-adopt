@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 导航栏组件
+ * 用户端导航栏组件
  * Logo + 主菜单 + 搜索框 + 登录/注册入口
  */
 import { ref } from 'vue'
@@ -15,38 +15,33 @@ const keyword = ref('')
 
 const menuList = [
   { name: '首页', path: '/' },
-  { name: '线路中心', path: '/list' },
   { name: '项目介绍', path: '/about' },
   { name: '个人中心', path: '/mine' },
 ]
 
 function handleSearch() {
-  // 跳转到列表页并携带搜索关键词
-  router.push({ path: '/list', query: { keyword: keyword.value } })
+  router.push({ path: '/', query: { keyword: keyword.value } })
 }
 
 function handleLogout() {
   userStore.logout()
-  router.push('/')
+  router.push('/login')
 }
 </script>
 
 <template>
   <header class="yt-navbar">
     <div class="container nav-inner">
-      <!-- Logo -->
       <div class="logo" @click="router.push('/')">
         <img :src="logoImg" alt="青行迹" class="logo-img" />
       </div>
 
-      <!-- 主菜单 -->
       <nav class="nav-menu">
         <router-link v-for="item in menuList" :key="item.path" :to="item.path" class="nav-item">
           {{ item.name }}
         </router-link>
       </nav>
 
-      <!-- 搜索框 -->
       <div class="nav-search">
         <el-input
           v-model="keyword"
@@ -60,7 +55,6 @@ function handleLogout() {
         </el-input>
       </div>
 
-      <!-- 用户区 -->
       <div class="nav-user">
         <template v-if="userStore.isLogin">
           <span class="nickname">{{ userStore.userInfo?.nickname }}</span>
@@ -68,7 +62,7 @@ function handleLogout() {
         </template>
         <template v-else>
           <el-button link type="primary" @click="router.push('/login')">登录</el-button>
-          <el-button type="primary" @click="router.push('/register')">注册</el-button>
+          <el-button type="primary" @click="router.push('/login')">注册</el-button>
         </template>
       </div>
     </div>
