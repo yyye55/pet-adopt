@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40">
+  <!-- 轨迹线条 + 山海弧线 + 青春上扬箭头 -->
+  <path d="M8 32 Q24 12 40 28 T72 20" fill="none" stroke="#2478B5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M62 20 L72 12 L70 24 Z" fill="#FF7D30"/>
+  <circle cx="10" cy="32" r="3" fill="#4FA3A5"/>
+  <text x="82" y="26" font-family="Microsoft YaHei, sans-serif" font-size="18" font-weight="700" fill="#2478B5">青行迹</text>
+</svg>

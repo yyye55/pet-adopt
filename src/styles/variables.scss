@@ -1,0 +1,58 @@
+// ==========================================
+// 青行迹 · 全局设计 Token
+// 品牌配色 + 圆角 + 阴影 + 间距
+// ==========================================
+
+// ---------- 品牌色 ----------
+$color-primary: #2478B5;       // 山海蓝（导航、标题、主按钮）
+$color-secondary: #4FA3A5;     // 青翠绿（标签、次要按钮）
+$color-accent: #FF7D30;        // 活力橙（报名、价格、重点按钮）
+
+// ---------- 中性色 ----------
+$color-bg: #F8FAFB;            // 极浅米白（全站底色）
+$color-text-primary: #2F3E46;  // 文字主色
+$color-text-regular: #4A5568;  // 文字常规
+$color-text-secondary: #718096; // 文字次要
+$color-border: #E2E8F0;        // 边框色
+$color-white: #FFFFFF;
+
+// ---------- 圆角 ----------
+$radius-card: 16px;            // 卡片圆角
+$radius-button: 6px;           // 按钮圆角
+$radius-tag: 999px;            // 胶囊标签圆角
+
+// ---------- 阴影 ----------
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+$shadow-card: 0 4px 16px rgba(36, 120, 181, 0.08);
+$shadow-hover: 0 8px 24px rgba(36, 120, 181, 0.14);
+
+// ---------- 间距 ----------
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+$spacing-xxl: 32px;
+
+// ==========================================
+// 导出为 CSS 变量（供组件中使用 var(--xxx)）
+// ==========================================
+:root {
+  --color-primary: #{$color-primary};
+  --color-secondary: #{$color-secondary};
+  --color-accent: #{$color-accent};
+  --color-bg: #{$color-bg};
+  --color-text-primary: #{$color-text-primary};
+  --color-text-regular: #{$color-text-regular};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-border: #{$color-border};
+  --color-white: #{$color-white};
+
+  --radius-card: #{$radius-card};
+  --radius-button: #{$radius-button};
+  --radius-tag: #{$radius-tag};
+
+  --shadow-sm: #{$shadow-sm};
+  --shadow-card: #{$shadow-card};
+  --shadow-hover: #{$shadow-hover};
+}
