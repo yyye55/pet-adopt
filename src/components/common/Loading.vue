@@ -23,7 +23,7 @@ withDefaults(
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .common-loading {
   display: flex;
   flex-direction: column;
@@ -31,16 +31,16 @@ withDefaults(
   justify-content: center;
   padding: 60px 0;
   gap: 12px;
+}
 
-  .loading-icon {
-    color: #2478b5;
-    animation: rotate 1s linear infinite;
-  }
+.common-loading .loading-icon {
+  color: var(--color-primary);
+  animation: rotate 1s linear infinite;
+}
 
-  .loading-text {
-    color: #718096;
-    font-size: 14px;
-  }
+.common-loading .loading-text {
+  color: var(--color-text-secondary);
+  font-size: 14px;
 }
 
 @keyframes rotate {

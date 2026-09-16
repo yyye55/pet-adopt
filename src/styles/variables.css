@@ -1,21 +1,31 @@
 /* ==========================================
-   青行迹 · 全局设计 Token
+   拾光萌约 · 全局设计 Token
    品牌配色 + 圆角 + 阴影 + 间距
+   暖橙治愈风
    ========================================== */
 
 :root {
-  /* ---------- 品牌色（基于 Logo 提取） ---------- */
-  --color-primary: #2A9D8F;
-  --color-secondary: #8EC8A8;
-  --color-accent: #E76F51;
+  /* ---------- 品牌色 ---------- */
+  --color-primary: #f59e0b;
+  --color-primary-dark: #d97706;
+  --color-secondary: #fed7aa;
+  --color-accent: #ec4899;
 
   /* ---------- 中性色 ---------- */
-  --color-bg: #F8FAFB;
-  --color-text-primary: #2F3E46;
-  --color-text-regular: #4A5568;
+  --color-bg: #fffbf5;
+  --color-bg-light: #fafbfc;
+  --color-text-primary: #2f3e46;
+  --color-text-regular: #4a5568;
   --color-text-secondary: #718096;
-  --color-border: #E2E8F0;
-  --color-white: #FFFFFF;
+  --color-placeholder: #a0aec0;
+  --color-border: #fde8d0;
+  --color-white: #ffffff;
+
+  /* ---------- 状态色 ---------- */
+  --color-success: #67c23a;
+  --color-warning: #e6a23c;
+  --color-danger: #f56c6c;
+  --color-info: #909399;
 
   /* ---------- 圆角 ---------- */
   --radius-card: 16px;
@@ -24,8 +34,8 @@
 
   /* ---------- 阴影 ---------- */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 4px 16px rgba(42, 157, 143, 0.08);
-  --shadow-hover: 0 8px 24px rgba(42, 157, 143, 0.14);
+  --shadow-card: 0 4px 16px rgba(245, 158, 11, 0.08);
+  --shadow-hover: 0 8px 24px rgba(245, 158, 11, 0.18);
 
   /* ---------- 间距 ---------- */
   --spacing-xs: 4px;

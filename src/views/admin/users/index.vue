@@ -11,5 +11,3 @@
     <!-- 用户表格待开发 -->
   </div>
 </template>
-
-<style scoped lang="scss"></style>

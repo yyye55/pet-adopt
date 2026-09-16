@@ -1,104 +1,108 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
+// ========== 菜单配置 ==========
+const userMenuList = [
+  { name: '宠物列表', path: '/', icon: 'House' },
+  { name: '我的申请', path: '/adoptions', icon: 'Document' },
+  { name: '个人中心', path: '/mine', icon: 'UserFilled' },
+]
+
+const adminMenuList = [
+  { name: '申请审核', path: '/admin', icon: 'Checked' },
+  { name: '宠物档案', path: '/admin/pets', icon: 'Files' },
+  { name: '用户管理', path: '/admin/users', icon: 'User' },
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // ========== 用户端 ==========
     {
       path: '/',
-      component: () => import('@/components/layout/Layout.vue'),
+      component: () => import('@/components/layout/AppLayout.vue'),
+      props: {
+        theme: 'light',
+        title: '拾光萌约',
+        subtitle: 'Pet Moment',
+        homePath: '/',
+        menuList: userMenuList,
+        showProfileLink: true,
+      },
       children: [
         {
           path: '',
           name: 'home',
           component: () => import('@/views/user/home/list.vue'),
-          meta: { title: '青行迹 · 线路列表', requiresAuth: true },
+          meta: { title: '拾光萌约 · 待领养宠物', requiresAuth: true },
         },
         {
-          path: 'detail/:id',
-          name: 'detail',
-          component: () => import('@/views/user/home/detail.vue'),
-          meta: { title: '青行迹 · 线路详情', requiresAuth: true },
-        },
-        {
-          path: 'signup/:id',
-          name: 'signup',
-          component: () => import('@/views/user/home/signup.vue'),
-          meta: { title: '青行迹 · 报名', requiresAuth: true },
-        },
-        {
-          path: 'about',
-          name: 'about',
-          component: () => import('@/views/user/about/index.vue'),
-          meta: { title: '青行迹 · 项目介绍' },
+          path: 'adoptions',
+          name: 'adoptions',
+          component: () => import('@/views/user/adoptions/index.vue'),
+          meta: { title: '拾光萌约 · 我的申请', requiresAuth: true },
         },
         {
           path: 'mine',
           name: 'mine',
           component: () => import('@/views/user/mine/index.vue'),
-          meta: { title: '青行迹 · 个人中心', requiresAuth: true },
+          meta: { title: '拾光萌约 · 个人中心', requiresAuth: true },
         },
       ],
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/user/login/index.vue'),
-      meta: { title: '青行迹 · 登录' },
+      component: () => import('@/views/login/index.vue'),
+      meta: { title: '拾光萌约 · 登录' },
     },
 
     // ========== 管理员端 ==========
     {
       path: '/admin',
-      component: () => import('@/components/layout/AdminLayout.vue'),
+      component: () => import('@/components/layout/AppLayout.vue'),
+      props: {
+        theme: 'dark',
+        title: '拾光萌约',
+        subtitle: '救助站后台',
+        homePath: '/admin',
+        menuList: adminMenuList,
+        showProfileLink: false,
+        contentBg: '#FFF5E6',
+      },
       meta: { requiresAuth: true, requiresAdmin: true },
       children: [
         {
           path: '',
-          name: 'admin-dashboard',
-          component: () => import('@/views/admin/index.vue'),
-          meta: { title: '管理后台 · 仪表盘', requiresAdmin: true },
+          name: 'admin-review',
+          component: () => import('@/views/admin/audit/index.vue'),
+          meta: { title: '救助站后台 · 申请审核', requiresAdmin: true },
         },
         {
-          path: 'routes',
-          name: 'admin-routes',
-          component: () => import('@/views/admin/routes/index.vue'),
-          meta: { title: '管理后台 · 线路管理', requiresAdmin: true },
-        },
-        {
-          path: 'orders',
-          name: 'admin-orders',
-          component: () => import('@/views/admin/orders/index.vue'),
-          meta: { title: '管理后台 · 订单管理', requiresAdmin: true },
+          path: 'pets',
+          name: 'admin-pets',
+          component: () => import('@/views/admin/pets/index.vue'),
+          meta: { title: '救助站后台 · 宠物档案', requiresAdmin: true },
         },
         {
           path: 'users',
           name: 'admin-users',
           component: () => import('@/views/admin/users/index.vue'),
-          meta: { title: '管理后台 · 用户管理', requiresAdmin: true },
-        },
-        {
-          path: 'signups',
-          name: 'admin-signups',
-          component: () => import('@/views/admin/signups/index.vue'),
-          meta: { title: '管理后台 · 报名审核', requiresAdmin: true },
+          meta: { title: '救助站后台 · 用户管理', requiresAdmin: true },
         },
       ],
     },
   ],
 })
 
-// 全局前置守卫：页面标题 + 登录鉴权 + 角色鉴权
+// 全局前置守卫
 router.beforeEach((to) => {
-  // 设置页面标题
   if (to.meta.title) {
     document.title = to.meta.title as string
   }
 
   const userStore = useUserStore()
 
-  // 管理员权限校验
   if (to.meta.requiresAdmin) {
     if (!userStore.isLogin) {
       return { name: 'login', query: { redirect: to.fullPath } }
@@ -109,7 +113,6 @@ router.beforeEach((to) => {
     return true
   }
 
-  // 普通登录校验
   if (to.meta.requiresAuth && !userStore.isLogin) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }

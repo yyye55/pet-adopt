@@ -69,10 +69,10 @@ function handleConfirm() {
   </el-dialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .confirm-content {
   font-size: 15px;
-  color: #2f3e46;
+  color: var(--color-text-primary);
   line-height: 1.6;
   padding: 8px 0;
 }
