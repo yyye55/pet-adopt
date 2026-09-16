@@ -6,9 +6,8 @@
 </script>
 
 <template>
-  <div class="home-page">
+  <div class="list-page">
     <h2>线路列表</h2>
-    <!-- 搜索栏、线路卡片、分页待开发 -->
   </div>
 </template>
 

@@ -1,0 +1,37 @@
+/* ==========================================
+   青行迹 · 全局设计 Token
+   品牌配色 + 圆角 + 阴影 + 间距
+   ========================================== */
+
+:root {
+  /* ---------- 品牌色（基于 Logo 提取） ---------- */
+  --color-primary: #2A9D8F;
+  --color-secondary: #8EC8A8;
+  --color-accent: #E76F51;
+
+  /* ---------- 中性色 ---------- */
+  --color-bg: #F8FAFB;
+  --color-text-primary: #2F3E46;
+  --color-text-regular: #4A5568;
+  --color-text-secondary: #718096;
+  --color-border: #E2E8F0;
+  --color-white: #FFFFFF;
+
+  /* ---------- 圆角 ---------- */
+  --radius-card: 16px;
+  --radius-button: 6px;
+  --radius-tag: 999px;
+
+  /* ---------- 阴影 ---------- */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 16px rgba(42, 157, 143, 0.08);
+  --shadow-hover: 0 8px 24px rgba(42, 157, 143, 0.14);
+
+  /* ---------- 间距 ---------- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+}

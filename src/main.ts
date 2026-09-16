@@ -8,7 +8,7 @@ import App from './App.vue'
 import router from './router'
 
 // 全局样式
-import '@/styles/index.scss'
+import '@/styles/index.css'
 
 const app = createApp(App)
 

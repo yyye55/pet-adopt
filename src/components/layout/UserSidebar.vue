@@ -1,6 +1,7 @@
 ﻿<script setup lang="ts">
 /**
- * 管理员侧边导航
+ * 用户端侧边栏
+ * Logo + 导航菜单
  */
 import { useRouter } from 'vue-router'
 import logoImg from '@/assets/logo.png'
@@ -8,21 +9,19 @@ import logoImg from '@/assets/logo.png'
 const router = useRouter()
 
 const menuList = [
-  { name: '仪表盘', path: '/admin', icon: 'Odometer' },
-  { name: '线路管理', path: '/admin/routes', icon: 'List' },
-  { name: '订单管理', path: '/admin/orders', icon: 'Tickets' },
-  { name: '用户管理', path: '/admin/users', icon: 'User' },
-  { name: '报名审核', path: '/admin/signups', icon: 'Checked' },
+  { name: '首页', path: '/', icon: 'HomeFilled' },
+  { name: '项目介绍', path: '/about', icon: 'InfoFilled' },
+  { name: '个人中心', path: '/mine', icon: 'UserFilled' },
 ]
 </script>
 
 <template>
-  <aside class="admin-sidebar">
-    <div class="sidebar-logo" @click="router.push('/admin')">
+  <aside class="user-sidebar">
+    <div class="sidebar-logo" @click="router.push('/')">
       <img :src="logoImg" alt="青行迹" class="logo-img" />
       <div class="logo-text">
         <div class="logo-cn">青行迹</div>
-        <div class="logo-en">管理后台</div>
+        <div class="logo-en">Youth Trail</div>
       </div>
     </div>
 
@@ -37,10 +36,10 @@ const menuList = [
 
 <style scoped lang="scss">
 
-.admin-sidebar {
+.user-sidebar {
   width: 220px;
-  background: #001529;
-  color: #fff;
+  background: var(--color-white);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -55,7 +54,7 @@ const menuList = [
     gap: 10px;
     padding: 0 20px;
     cursor: pointer;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--color-border);
 
     .logo-img {
       width: 40px;
@@ -68,13 +67,13 @@ const menuList = [
       .logo-cn {
         font-size: 18px;
         font-weight: 700;
-        color: #fff;
+        color: var(--color-primary);
         line-height: 1.2;
       }
 
       .logo-en {
         font-size: 11px;
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--color-text-secondary);
         letter-spacing: 1px;
       }
     }
@@ -91,23 +90,36 @@ const menuList = [
       padding: 12px 16px;
       margin-bottom: 4px;
       border-radius: 8px;
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--color-text-regular);
       font-size: 15px;
       transition: all 0.2s;
+      position: relative;
 
       .menu-icon {
         font-size: 18px;
       }
 
       &.router-link-active {
-        background: var(--color-primary);
-        color: #fff;
+        background: rgba(var(--color-primary), 0.1);
+        color: var(--color-primary);
         font-weight: 600;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: -12px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 20px;
+          background: var(--color-primary);
+          border-radius: 0 3px 3px 0;
+        }
       }
 
       &:hover {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--color-bg);
+        color: var(--color-primary);
       }
     }
   }

@@ -1,30 +1,41 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
- * 用户端整体布局组件
+ * 用户端整体布局
+ * 左侧边栏 + 右侧（顶栏 + 内容区）
  */
-import NavBar from './NavBar.vue'
-import Footer from './Footer.vue'
+import UserSidebar from './UserSidebar.vue'
+import UserHeader from './UserHeader.vue'
 </script>
 
 <template>
-  <div class="yt-layout">
-    <NavBar />
-    <main class="yt-main">
-      <router-view />
-    </main>
-    <Footer />
+  <div class="user-layout">
+    <UserSidebar />
+    <div class="user-main">
+      <UserHeader />
+      <main class="user-content">
+        <router-view />
+      </main>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.yt-layout {
-  min-height: 100vh;
+
+.user-layout {
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
 }
 
-.yt-main {
+.user-main {
   flex: 1;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-content {
+  flex: 1;
+  padding: 24px;
+  background: var(--color-bg);
 }
 </style>

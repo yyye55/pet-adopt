@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 /**
- * 管理员顶栏
+ * 用户端顶栏
  * 仅展示账号 + 退出登录按钮
  */
 import { useRouter } from 'vue-router'
@@ -17,29 +17,35 @@ function handleLogout() {
 </script>
 
 <template>
-  <header class="admin-header">
+  <header class="user-header">
     <div class="header-right">
-      <el-dropdown>
-        <div class="account">
-          <el-avatar :size="32" class="avatar">
-            {{ userStore.userInfo?.nickname?.charAt(0) || 'A' }}
-          </el-avatar>
-          <span class="nickname">{{ userStore.userInfo?.nickname || '管理员' }}</span>
-          <el-icon class="arrow"><ArrowDown /></el-icon>
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <template v-if="userStore.isLogin">
+        <el-dropdown>
+          <div class="account">
+            <el-avatar :size="32" class="avatar">
+              {{ userStore.userInfo?.nickname?.charAt(0) || 'U' }}
+            </el-avatar>
+            <span class="nickname">{{ userStore.userInfo?.nickname }}</span>
+            <el-icon class="arrow"><ArrowDown /></el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="router.push('/mine')">个人中心</el-dropdown-item>
+              <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </template>
+      <template v-else>
+        <el-button type="primary" @click="router.push('/login')">登录</el-button>
+      </template>
     </div>
   </header>
 </template>
 
 <style scoped lang="scss">
 
-.admin-header {
+.user-header {
   height: 56px;
   background: var(--color-white);
   box-shadow: var(--shadow-sm);
@@ -47,6 +53,9 @@ function handleLogout() {
   align-items: center;
   justify-content: flex-end;
   padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 
   .header-right {
     display: flex;

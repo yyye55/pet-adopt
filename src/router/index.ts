@@ -12,8 +12,8 @@ const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: () => import('@/views/user/home/index.vue'),
-          meta: { title: '青行迹 · 首页', requiresAuth: true },
+          component: () => import('@/views/user/home/list.vue'),
+          meta: { title: '青行迹 · 线路列表', requiresAuth: true },
         },
         {
           path: 'detail/:id',
