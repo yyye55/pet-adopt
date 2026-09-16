@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 /**
  * 公共注册表单组件
  * 仅用户端展示
@@ -76,6 +76,7 @@ async function handleSubmit() {
     size="large"
     class="register-form"
     @submit.prevent="handleSubmit"
+    @keyup.enter="handleSubmit"
   >
     <el-form-item label="账号" prop="account">
       <el-input v-model="form.account" placeholder="请输入账号">
@@ -112,69 +113,68 @@ async function handleSubmit() {
   </el-form>
 </template>
 
-<style scoped lang="scss">
-
+<style scoped>
 .register-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 340px;
-
-  :deep(.el-form-item) {
-    margin-bottom: 12px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    padding-bottom: 6px;
-  }
-
-  :deep(.el-input__wrapper) {
-    height: 44px;
-    border-radius: 8px;
-    background: #fafbfc;
-    box-shadow: 0 0 0 1px var(--color-border) inset;
-    transition: box-shadow 0.2s;
-
-    &.is-focus {
-      box-shadow:
-        0 0 0 1px var(--color-primary) inset,
-        0 0 0 3px rgba(var(--color-primary), 0.15);
-    }
-
-    &:hover {
-      box-shadow: 0 0 0 1px var(--color-primary) inset;
-    }
-  }
-
-  :deep(.el-input__inner) {
-    font-size: 14px;
-
-    &::placeholder {
-      color: #a0aec0;
-    }
-  }
-
-  :deep(.el-input__prefix-inner) {
-    color: #a0aec0;
-
-    .el-input__wrapper.is-focus & {
-      color: var(--color-primary);
-    }
-  }
-
-  :deep(.el-input__password) {
-    color: #a0aec0;
-  }
 }
 
-.input-icon {
+.register-form :deep(.el-form-item) {
+  margin-bottom: 12px;
+}
+
+.register-form :deep(.el-form-item__label) {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  padding-bottom: 6px;
+}
+
+.register-form :deep(.el-input__wrapper) {
+  height: 44px;
+  border-radius: 8px;
+  background: var(--color-bg-light);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  transition: box-shadow 0.2s;
+}
+
+.register-form :deep(.el-input__wrapper.is-focus) {
+  box-shadow:
+    0 0 0 1px var(--color-primary) inset,
+    0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.register-form :deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px var(--color-primary) inset;
+}
+
+.register-form :deep(.el-input__inner) {
+  font-size: 14px;
+}
+
+.register-form :deep(.el-input__inner::placeholder) {
+  color: var(--color-placeholder);
+}
+
+.register-form :deep(.el-input__prefix-inner) {
+  color: var(--color-placeholder);
+}
+
+.register-form :deep(.el-input__wrapper.is-focus .el-input__prefix-inner) {
+  color: var(--color-primary);
+}
+
+.register-form :deep(.el-input__password) {
+  color: var(--color-placeholder);
+}
+
+.register-form .input-icon {
   font-size: 16px;
 }
 
-.submit-btn {
+.register-form .submit-btn {
   width: 100%;
   height: 44px;
   border-radius: 8px;
@@ -183,10 +183,10 @@ async function handleSubmit() {
   background: var(--color-primary);
   border-color: var(--color-primary);
   margin-top: 4px;
+}
 
-  &:hover {
-    background: #25877C;
-    border-color: #25877C;
-  }
+.register-form .submit-btn:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
 }
 </style>

@@ -1,7 +1,7 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 /**
  * 公共登录表单组件
- * 管理员端和用户端共用
+ * 管理员端和用户端共用，支持 Enter 键提交
  */
 import { reactive, ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
@@ -55,6 +55,7 @@ async function handleSubmit() {
     size="large"
     class="login-form"
     @submit.prevent="handleSubmit"
+    @keyup.enter="handleSubmit"
   >
     <el-form-item label="账号" prop="account">
       <el-input v-model="form.account" placeholder="请输入账号">
@@ -78,69 +79,68 @@ async function handleSubmit() {
   </el-form>
 </template>
 
-<style scoped lang="scss">
-
+<style scoped>
 .login-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 340px;
-
-  :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    padding-bottom: 6px;
-  }
-
-  :deep(.el-input__wrapper) {
-    height: 44px;
-    border-radius: 8px;
-    background: #fafbfc;
-    box-shadow: 0 0 0 1px var(--color-border) inset;
-    transition: box-shadow 0.2s;
-
-    &.is-focus {
-      box-shadow:
-        0 0 0 1px var(--color-primary) inset,
-        0 0 0 3px rgba(var(--color-primary), 0.15);
-    }
-
-    &:hover {
-      box-shadow: 0 0 0 1px var(--color-primary) inset;
-    }
-  }
-
-  :deep(.el-input__inner) {
-    font-size: 14px;
-
-    &::placeholder {
-      color: #a0aec0;
-    }
-  }
-
-  :deep(.el-input__prefix-inner) {
-    color: #a0aec0;
-
-    .el-input__wrapper.is-focus & {
-      color: var(--color-primary);
-    }
-  }
-
-  :deep(.el-input__password) {
-    color: #a0aec0;
-  }
 }
 
-.input-icon {
+.login-form :deep(.el-form-item) {
+  margin-bottom: 20px;
+}
+
+.login-form :deep(.el-form-item__label) {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  padding-bottom: 6px;
+}
+
+.login-form :deep(.el-input__wrapper) {
+  height: 44px;
+  border-radius: 8px;
+  background: var(--color-bg-light);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  transition: box-shadow 0.2s;
+}
+
+.login-form :deep(.el-input__wrapper.is-focus) {
+  box-shadow:
+    0 0 0 1px var(--color-primary) inset,
+    0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.login-form :deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px var(--color-primary) inset;
+}
+
+.login-form :deep(.el-input__inner) {
+  font-size: 14px;
+}
+
+.login-form :deep(.el-input__inner::placeholder) {
+  color: var(--color-placeholder);
+}
+
+.login-form :deep(.el-input__prefix-inner) {
+  color: var(--color-placeholder);
+}
+
+.login-form :deep(.el-input__wrapper.is-focus .el-input__prefix-inner) {
+  color: var(--color-primary);
+}
+
+.login-form :deep(.el-input__password) {
+  color: var(--color-placeholder);
+}
+
+.login-form .input-icon {
   font-size: 16px;
 }
 
-.submit-btn {
+.login-form .submit-btn {
   width: 100%;
   height: 44px;
   border-radius: 8px;
@@ -149,10 +149,10 @@ async function handleSubmit() {
   background: var(--color-primary);
   border-color: var(--color-primary);
   margin-top: 8px;
+}
 
-  &:hover {
-    background: #25877C;
-    border-color: #25877C;
-  }
+.login-form .submit-btn:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
 }
 </style>

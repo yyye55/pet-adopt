@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * 通用分页组件
  * 基于 Element Plus el-pagination 封装
@@ -66,7 +66,7 @@ function handleCurrentChange(val: number) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .common-pagination {
   display: flex;
   justify-content: flex-end;

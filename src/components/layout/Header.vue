@@ -1,7 +1,6 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 /**
- * 用户端顶栏
- * 仅展示账号 + 退出登录按钮
+ * 顶栏（通用）—— 账号下拉 + 退出登录
  */
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -17,7 +16,7 @@ function handleLogout() {
 </script>
 
 <template>
-  <header class="user-header">
+  <header class="app-header">
     <div class="header-right">
       <template v-if="userStore.isLogin">
         <el-dropdown>
@@ -30,8 +29,7 @@ function handleLogout() {
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="router.push('/mine')">个人中心</el-dropdown-item>
-              <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -43,10 +41,9 @@ function handleLogout() {
   </header>
 </template>
 
-<style scoped lang="scss">
-
-.user-header {
-  height: 56px;
+<style scoped>
+.app-header {
+  height: 72px;
   background: var(--color-white);
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -56,40 +53,40 @@ function handleLogout() {
   position: sticky;
   top: 0;
   z-index: 50;
+}
 
-  .header-right {
-    display: flex;
-    align-items: center;
-  }
+.app-header .header-right {
+  display: flex;
+  align-items: center;
+}
 
-  .account {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 4px 12px;
-    border-radius: 20px;
-    transition: background 0.2s;
+.app-header .account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
 
-    &:hover {
-      background: var(--color-bg);
-    }
+.app-header .account:hover {
+  background: var(--color-bg);
+}
 
-    .avatar {
-      background: var(--color-primary);
-      color: #fff;
-    }
+.app-header .account .avatar {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
 
-    .nickname {
-      color: var(--color-text-primary);
-      font-size: 14px;
-      font-weight: 500;
-    }
+.app-header .account .nickname {
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
 
-    .arrow {
-      color: var(--color-text-secondary);
-      font-size: 12px;
-    }
-  }
+.app-header .account .arrow {
+  color: var(--color-text-secondary);
+  font-size: 12px;
 }
 </style>

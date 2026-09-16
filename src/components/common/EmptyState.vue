@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * 通用空状态组件
  * 列表/表格无数据时展示
@@ -28,7 +28,7 @@ const imgUrl = computed(() => props.image || undefined)
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .common-empty {
   display: flex;
   align-items: center;
