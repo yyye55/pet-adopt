@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * 个人中心
- * 路由：/mine（需登录）
- * 左右两栏布局，每项独立编辑
+ * 路由：/home/mine
+ * 整表单整体切换编辑/查看态
  */
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -22,37 +22,47 @@ const stats = computed(() => ({
   pendingCount: adoptionStore.myPendingCount,
 }))
 
-// ---------- 独立编辑弹窗 ----------
-type EditField = 'nickname' | 'phone' | 'email' | 'hobby' | null
-const editingField = ref<EditField>(null)
-const editValue = ref('')
+// ---------- 整表单编辑态 ----------
+const isEditing = ref(false)
+const formData = reactive({
+  nickname: info.nickname,
+  gender: info.gender,
+  birthday: info.birthday,
+  city: info.city,
+  phone: info.phone,
+  email: info.email,
+  hobby: info.hobby,
+  bio: info.bio,
+})
 
-const fieldLabels: Record<Exclude<EditField, null>, string> = {
-  nickname: '昵称',
-  phone: '电话',
-  email: '邮箱',
-  hobby: '养宠经验',
+const genderOptions = ['男', '女', '保密']
+
+function handleEdit() {
+  Object.assign(formData, {
+    nickname: info.nickname,
+    gender: info.gender,
+    birthday: info.birthday,
+    city: info.city,
+    phone: info.phone,
+    email: info.email,
+    hobby: info.hobby,
+    bio: info.bio,
+  })
+  isEditing.value = true
 }
 
-function startEdit(field: Exclude<EditField, null>) {
-  editingField.value = field
-  editValue.value = (info as any)[field] || ''
-}
-
-function saveEdit() {
-  if (!editingField.value) return
-  const val = editValue.value.trim()
-  if (editingField.value === 'nickname' && !val) {
+function handleSave() {
+  if (!formData.nickname.trim()) {
     ElMessage.warning('昵称不能为空')
     return
   }
-  userStore.updateProfile({ [editingField.value]: val })
+  userStore.updateProfile({ ...formData })
   ElMessage.success('已更新')
-  editingField.value = null
+  isEditing.value = false
 }
 
-function cancelEdit() {
-  editingField.value = null
+function handleCancel() {
+  isEditing.value = false
 }
 
 // ---------- 退出登录 ----------
@@ -90,7 +100,7 @@ function handleLogout() {
         </div>
 
         <div class="stats-card">
-          <div class="stat-item" @click="router.push('/adoptions')">
+          <div class="stat-item" @click="router.push('/home/adoptions')">
             <div class="stat-num">{{ stats.applyCount }}</div>
             <div class="stat-label">总申请数</div>
           </div>
@@ -113,90 +123,128 @@ function handleLogout() {
 
       <!-- ========== 右栏 ========== -->
       <div class="col-right">
-        <div class="section-title">基本资料</div>
-
-        <div class="info-list">
-          <div class="info-row">
-            <span class="info-label">昵称</span>
-            <template v-if="editingField !== 'nickname'">
-              <span class="info-value">{{ info.nickname || '-' }}</span>
-              <el-button class="edit-btn" link type="primary" @click="startEdit('nickname')"
-                >编辑</el-button
-              >
-            </template>
-            <template v-else>
-              <el-input v-model="editValue" class="edit-input" maxlength="20" />
-              <div class="edit-actions">
-                <el-button type="primary" size="small" @click="saveEdit">保存</el-button>
-                <el-button size="small" @click="cancelEdit">取消</el-button>
-              </div>
-            </template>
+        <div class="profile-form">
+          <!-- 卡片头部 -->
+          <div class="form-header">
+            <div class="form-title">
+              <span class="title-text">个人资料</span>
+              <span class="title-sub">基本信息 · 联系方式 · 养宠偏好</span>
+            </div>
+            <el-button v-if="!isEditing" type="primary" plain @click="handleEdit">
+              编辑资料
+            </el-button>
           </div>
 
-          <div class="info-row">
-            <span class="info-label">电话</span>
-            <template v-if="editingField !== 'phone'">
-              <span class="info-value">{{ info.phone || '-' }}</span>
-              <el-button class="edit-btn" link type="primary" @click="startEdit('phone')"
-                >编辑</el-button
-              >
-            </template>
-            <template v-else>
-              <el-input
-                v-model="editValue"
-                class="edit-input"
-                maxlength="11"
-                placeholder="手机号"
-              />
-              <div class="edit-actions">
-                <el-button type="primary" size="small" @click="saveEdit">保存</el-button>
-                <el-button size="small" @click="cancelEdit">取消</el-button>
-              </div>
-            </template>
+          <!-- 字段列表 -->
+          <div class="form-body">
+            <!-- 昵称 -->
+            <div class="form-row">
+              <span class="row-label">昵称</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.nickname || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-input v-model="formData.nickname" maxlength="20" />
+              </template>
+            </div>
+
+            <!-- 性别 -->
+            <div class="form-row">
+              <span class="row-label">性别</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.gender || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-select v-model="formData.gender" placeholder="请选择" style="width: 200px">
+                  <el-option v-for="g in genderOptions" :key="g" :label="g" :value="g" />
+                </el-select>
+              </template>
+            </div>
+
+            <!-- 生日 -->
+            <div class="form-row">
+              <span class="row-label">生日</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.birthday || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-date-picker
+                  v-model="formData.birthday"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="选择日期"
+                  style="width: 200px"
+                />
+              </template>
+            </div>
+
+            <!-- 城市 -->
+            <div class="form-row">
+              <span class="row-label">城市</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.city || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-input v-model="formData.city" maxlength="20" placeholder="如：成都" />
+              </template>
+            </div>
+
+            <!-- 电话 -->
+            <div class="form-row">
+              <span class="row-label">电话</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.phone || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-input v-model="formData.phone" maxlength="11" placeholder="手机号" />
+              </template>
+            </div>
+
+            <!-- 邮箱 -->
+            <div class="form-row">
+              <span class="row-label">邮箱</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.email || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-input v-model="formData.email" maxlength="50" placeholder="邮箱地址" />
+              </template>
+            </div>
+
+            <!-- 爱好 -->
+            <div class="form-row">
+              <span class="row-label">爱好</span>
+              <template v-if="!isEditing">
+                <span class="row-value">{{ info.hobby || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-input v-model="formData.hobby" maxlength="50" placeholder="如：旅游、摄影" />
+              </template>
+            </div>
+
+            <!-- 个人简介 -->
+            <div class="form-row">
+              <span class="row-label">个人简介</span>
+              <template v-if="!isEditing">
+                <span class="row-value bio">{{ info.bio || '-' }}</span>
+              </template>
+              <template v-else>
+                <el-input
+                  v-model="formData.bio"
+                  type="textarea"
+                  :rows="2"
+                  maxlength="80"
+                  show-word-limit
+                  placeholder="一句话介绍自己"
+                />
+              </template>
+            </div>
           </div>
 
-          <div class="info-row">
-            <span class="info-label">邮箱</span>
-            <template v-if="editingField !== 'email'">
-              <span class="info-value">{{ info.email || '-' }}</span>
-              <el-button class="edit-btn" link type="primary" @click="startEdit('email')"
-                >编辑</el-button
-              >
-            </template>
-            <template v-else>
-              <el-input
-                v-model="editValue"
-                class="edit-input"
-                maxlength="50"
-                placeholder="邮箱地址"
-              />
-              <div class="edit-actions">
-                <el-button type="primary" size="small" @click="saveEdit">保存</el-button>
-                <el-button size="small" @click="cancelEdit">取消</el-button>
-              </div>
-            </template>
-          </div>
-
-          <div class="info-row last">
-            <span class="info-label">爱好</span>
-            <template v-if="editingField !== 'hobby'">
-              <span class="info-value">{{ info.hobby || '-' }}</span>
-              <el-button class="edit-btn" link type="primary" @click="startEdit('hobby')"
-                >编辑</el-button
-              >
-            </template>
-            <template v-else>
-              <el-input
-                v-model="editValue"
-                class="edit-input"
-                maxlength="50"
-                placeholder="如：旅游、摄影"
-              />
-              <div class="edit-actions">
-                <el-button type="primary" size="small" @click="saveEdit">保存</el-button>
-                <el-button size="small" @click="cancelEdit">取消</el-button>
-              </div>
-            </template>
+          <!-- 卡片底部：编辑态按钮 -->
+          <div v-if="isEditing" class="form-footer">
+            <el-button @click="handleCancel">取消</el-button>
+            <el-button type="primary" @click="handleSave">保存</el-button>
           </div>
         </div>
       </div>
@@ -323,23 +371,43 @@ function handleLogout() {
   width: 100%;
 }
 
-/* ===== 右栏 ===== */
-.section-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 12px;
-  padding-left: 4px;
-}
-
-.info-list {
+/* ===== 右栏：资料卡片 ===== */
+.profile-form {
   background: var(--color-white);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-sm);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.form-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.title-sub {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.form-body {
   padding: 6px 0;
 }
 
-.info-row {
+.form-row {
   display: flex;
   align-items: center;
   padding: 14px 24px;
@@ -347,36 +415,31 @@ function handleLogout() {
   gap: 16px;
 }
 
-.info-row.last {
+.form-row:last-child {
   border-bottom: none;
 }
 
-.info-label {
-  width: 70px;
+.row-label {
+  width: 80px;
   font-size: 14px;
   color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
-.info-value {
-  flex: 1;
+.row-value {
   font-size: 14px;
   color: var(--color-text-primary);
 }
 
-.edit-btn {
-  flex-shrink: 0;
-  padding: 0;
+.row-value.bio {
+  line-height: 1.6;
 }
 
-.edit-input {
-  flex: 1;
-  max-width: 320px;
-}
-
-.edit-actions {
+.form-footer {
   display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border);
 }
 </style>

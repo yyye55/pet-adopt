@@ -3,9 +3,9 @@ import { useUserStore } from '@/stores/user'
 
 // ========== 菜单配置 ==========
 const userMenuList = [
-  { name: '宠物列表', path: '/', icon: 'House' },
-  { name: '我的申请', path: '/adoptions', icon: 'Document' },
-  { name: '个人中心', path: '/mine', icon: 'UserFilled' },
+  { name: '领养宠物', path: '/home', icon: 'House' },
+  { name: '我的申请', path: '/home/adoptions', icon: 'Document' },
+  { name: '个人中心', path: '/home/mine', icon: 'UserFilled' },
 ]
 
 const adminMenuList = [
@@ -17,36 +17,48 @@ const adminMenuList = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // ========== 用户端 ==========
+    // ========== 根路径 redirect ==========
     {
       path: '/',
+      redirect: () => {
+        const userStore = useUserStore()
+        if (!userStore.isLogin) return { name: 'login' }
+        if (userStore.isAdmin) return { path: '/admin' }
+        return { name: 'home' }
+      },
+    },
+
+    // ========== 用户端 ==========
+    {
+      path: '/home',
       component: () => import('@/components/layout/AppLayout.vue'),
       props: {
         theme: 'light',
         title: '拾光萌约',
         subtitle: 'Pet Moment',
-        homePath: '/',
+        homePath: '/home',
         menuList: userMenuList,
         showProfileLink: true,
       },
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
           name: 'home',
           component: () => import('@/views/user/home/list.vue'),
-          meta: { title: '拾光萌约 · 待领养宠物', requiresAuth: true },
+          meta: { title: '拾光萌约 · 待领养宠物' },
         },
         {
           path: 'adoptions',
           name: 'adoptions',
           component: () => import('@/views/user/adoptions/index.vue'),
-          meta: { title: '拾光萌约 · 我的申请', requiresAuth: true },
+          meta: { title: '拾光萌约 · 我的申请' },
         },
         {
           path: 'mine',
           name: 'mine',
           component: () => import('@/views/user/mine/index.vue'),
-          meta: { title: '拾光萌约 · 个人中心', requiresAuth: true },
+          meta: { title: '拾光萌约 · 个人中心' },
         },
       ],
     },
@@ -55,6 +67,12 @@ const router = createRouter({
       name: 'login',
       component: () => import('@/views/login/index.vue'),
       meta: { title: '拾光萌约 · 登录' },
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/views/login/index.vue'),
+      meta: { title: '拾光萌约 · 注册' },
     },
 
     // ========== 管理员端 ==========
@@ -76,19 +94,19 @@ const router = createRouter({
           path: '',
           name: 'admin-review',
           component: () => import('@/views/admin/audit/index.vue'),
-          meta: { title: '救助站后台 · 申请审核', requiresAdmin: true },
+          meta: { title: '救助站后台 · 申请审核' },
         },
         {
           path: 'pets',
           name: 'admin-pets',
           component: () => import('@/views/admin/pets/index.vue'),
-          meta: { title: '救助站后台 · 宠物档案', requiresAdmin: true },
+          meta: { title: '救助站后台 · 宠物档案' },
         },
         {
           path: 'users',
           name: 'admin-users',
           component: () => import('@/views/admin/users/index.vue'),
-          meta: { title: '救助站后台 · 用户管理', requiresAdmin: true },
+          meta: { title: '救助站后台 · 用户管理' },
         },
       ],
     },

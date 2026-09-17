@@ -10,6 +10,7 @@
 html,
 body {
   height: 100%;
+  overflow-y: scroll;
   font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, sans-serif;
   color: var(--color-text-primary);

@@ -22,7 +22,7 @@ function onLoginSuccess(role: 'user' | 'admin') {
   } else if (role === 'admin') {
     router.push('/admin')
   } else {
-    router.push('/')
+    router.push('/home')
   }
 }
 

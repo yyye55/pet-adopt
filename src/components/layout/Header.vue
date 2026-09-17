@@ -68,6 +68,7 @@ function handleLogout() {
   padding: 4px 12px;
   border-radius: 20px;
   transition: background 0.2s;
+  outline: none;
 }
 
 .app-header .account:hover {

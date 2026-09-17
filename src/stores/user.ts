@@ -20,12 +20,46 @@ export interface UserInfo {
   hobby: string
   avatar: string
   role: UserRole
+  gender: '男' | '女' | ''
+  birthday: string
+  city: string
+  bio: string
+  registerAt: string
+}
+
+/** 旧 userInfo 兼容补默认值 */
+function patchLegacy(raw: any): UserInfo {
+  return {
+    id: raw.id ?? 0,
+    nickname: raw.nickname ?? '',
+    phone: raw.phone ?? '',
+    email: raw.email ?? '',
+    hobby: raw.hobby ?? '',
+    avatar: raw.avatar ?? '',
+    role: raw.role ?? 'user',
+    gender: raw.gender ?? '',
+    birthday: raw.birthday ?? '',
+    city: raw.city ?? '',
+    bio: raw.bio ?? '',
+    registerAt: raw.registerAt ?? new Date().toLocaleString('zh-CN', { hour12: false }),
+  }
 }
 
 export const useUserStore = defineStore('user', () => {
   // ---------- state ----------
-  const userInfo = ref<UserInfo | null>(getStorage<UserInfo | null>(USER_KEY, null))
-  const token = ref<string>(getStorage<string>(TOKEN_KEY, ''))
+  const userInfo = ref<UserInfo | null>(null)
+  const token = ref<string>('')
+
+  // 初始化：读 localStorage + 兼容旧数据
+  const rawUser = getStorage<any>(USER_KEY, null)
+  if (rawUser) {
+    userInfo.value = patchLegacy(rawUser)
+    // 如果补了新字段，重新写回
+    if (!rawUser.gender || !rawUser.registerAt) {
+      setStorage(USER_KEY, userInfo.value)
+    }
+  }
+  token.value = getStorage<string>(TOKEN_KEY, '')
 
   // ---------- getters ----------
   const isLogin = computed(() => !!token.value)
@@ -45,6 +79,11 @@ export const useUserStore = defineStore('user', () => {
         hobby: mockMatched.hobby,
         avatar: mockMatched.avatar,
         role: mockMatched.role,
+        gender: mockMatched.gender,
+        birthday: mockMatched.birthday,
+        city: mockMatched.city,
+        bio: mockMatched.bio,
+        registerAt: mockMatched.registerAt,
       }
       userInfo.value = info
       token.value = `token_${Date.now()}`
@@ -59,6 +98,7 @@ export const useUserStore = defineStore('user', () => {
       (u: any) => u.account === account && u.password === password,
     )
     if (matched) {
+      const now = new Date().toLocaleString('zh-CN', { hour12: false })
       const info: UserInfo = {
         id: matched.id || Date.now(),
         nickname: account,
@@ -67,6 +107,11 @@ export const useUserStore = defineStore('user', () => {
         hobby: '',
         avatar: '',
         role: 'user',
+        gender: '',
+        birthday: '',
+        city: '',
+        bio: '',
+        registerAt: now,
       }
       userInfo.value = info
       token.value = `token_${Date.now()}`
@@ -79,8 +124,8 @@ export const useUserStore = defineStore('user', () => {
     throw new Error('账号或密码错误')
   }
 
-  /** 更新个人资料 */
-  function updateProfile(data: Partial<Omit<UserInfo, 'id' | 'role' | 'avatar'>>) {
+  /** 更新个人资料（registerAt / id / role / avatar 不可修改） */
+  function updateProfile(data: Partial<Omit<UserInfo, 'id' | 'role' | 'avatar' | 'registerAt'>>) {
     if (!userInfo.value) return
     userInfo.value = { ...userInfo.value, ...data }
     setStorage(USER_KEY, userInfo.value)

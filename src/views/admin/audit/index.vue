@@ -34,8 +34,8 @@ const filteredList = computed(() => {
 const stats = computed(() => ({
   total: adoptionStore.adoptions.length,
   pending: adoptionStore.adoptions.filter((a) => a.status === '待审核').length,
-  approved: adoptionStore.adoptions.filter((a) => a.status === '审核通过').length,
-  rejected: adoptionStore.adoptions.filter((a) => a.status === '审核拒绝').length,
+  approved: adoptionStore.adoptions.filter((a) => a.status === '已通过').length,
+  rejected: adoptionStore.adoptions.filter((a) => a.status === '已驳回').length,
 }))
 
 // ---------- 详情弹窗 ----------
@@ -78,30 +78,16 @@ function confirmReject() {
   }
   if (!rejectTarget.value) return
   adoptionStore.reviewAdoption(rejectTarget.value.id, false, rejectReason.value.trim())
-  ElMessage.success('已拒绝')
+  ElMessage.success('已驳回')
   rejectDialogVisible.value = false
-}
-
-function markDone(row: Adoption) {
-  ElMessageBox.confirm(`确认将「${row.petName}」标记为已完成领养？`, '完成领养', {
-    type: 'info',
-    confirmButtonText: '确认完成',
-    cancelButtonText: '取消',
-  })
-    .then(() => {
-      adoptionStore.completeAdoption(row.id)
-      ElMessage.success('已标记完成')
-    })
-    .catch(() => {})
 }
 
 // ---------- 状态标签 ----------
 function statusTagType(status: AdoptionStatus) {
   const map: Record<AdoptionStatus, string> = {
     待审核: 'warning',
-    审核通过: 'success',
-    审核拒绝: 'danger',
-    已完成: 'info',
+    已通过: 'success',
+    已驳回: 'danger',
   }
   return map[status]
 }
@@ -125,7 +111,7 @@ function statusTagType(status: AdoptionStatus) {
       </div>
       <div class="stat-card rejected">
         <div class="stat-num">{{ stats.rejected }}</div>
-        <div class="stat-label">已拒绝</div>
+        <div class="stat-label">已驳回</div>
       </div>
     </div>
 
@@ -140,9 +126,8 @@ function statusTagType(status: AdoptionStatus) {
       <el-radio-group v-model="statusFilter" class="status-group">
         <el-radio-button value="全部">全部</el-radio-button>
         <el-radio-button value="待审核">待审核</el-radio-button>
-        <el-radio-button value="审核通过">已通过</el-radio-button>
-        <el-radio-button value="审核拒绝">已拒绝</el-radio-button>
-        <el-radio-button value="已完成">已完成</el-radio-button>
+        <el-radio-button value="已通过">已通过</el-radio-button>
+        <el-radio-button value="已驳回">已驳回</el-radio-button>
       </el-radio-group>
     </div>
 
@@ -168,7 +153,7 @@ function statusTagType(status: AdoptionStatus) {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
+        <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button size="small" link @click="openDetail(row)">详情</el-button>
             <el-button
@@ -185,15 +170,7 @@ function statusTagType(status: AdoptionStatus) {
               type="danger"
               link
               @click="openReject(row)"
-              >拒绝</el-button
-            >
-            <el-button
-              v-if="row.status === '审核通过'"
-              size="small"
-              type="primary"
-              link
-              @click="markDone(row)"
-              >标记完成</el-button
+              >驳回</el-button
             >
           </template>
         </el-table-column>
@@ -254,7 +231,7 @@ function statusTagType(status: AdoptionStatus) {
             </el-tag>
           </div>
           <div v-if="detailItem.rejectReason" class="detail-row full">
-            <div class="detail-label">拒绝理由</div>
+            <div class="detail-label">驳回理由</div>
             <div class="detail-value reject-reason">{{ detailItem.rejectReason }}</div>
           </div>
         </div>
@@ -266,19 +243,19 @@ function statusTagType(status: AdoptionStatus) {
     </el-dialog>
 
     <!-- ========== 拒绝弹窗 ========== -->
-    <el-dialog v-model="rejectDialogVisible" width="420px" title="拒绝申请" destroy-on-close>
-      <p class="reject-tip">确认拒绝「{{ rejectTarget?.applicantName }}」的领养申请？</p>
+    <el-dialog v-model="rejectDialogVisible" width="420px" title="驳回申请" destroy-on-close>
+      <p class="reject-tip">确认驳回「{{ rejectTarget?.applicantName }}」的领养申请？</p>
       <el-input
         v-model="rejectReason"
         type="textarea"
         :rows="3"
-        placeholder="请填写拒绝理由（必填）"
+        placeholder="请填写驳回理由（必填）"
         maxlength="200"
         show-word-limit
       />
       <template #footer>
         <el-button @click="rejectDialogVisible = false">取消</el-button>
-        <el-button type="danger" @click="confirmReject">确认拒绝</el-button>
+        <el-button type="danger" @click="confirmReject">确认驳回</el-button>
       </template>
     </el-dialog>
   </div>

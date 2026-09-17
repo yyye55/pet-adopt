@@ -1,27 +1,28 @@
 <script setup lang="ts">
 /**
  * 我的领养申请
- * 路由：/adoptions
+ * 路由：/home/adoptions
  */
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
 import { useAdoptionStore, type AdoptionStatus } from '@/stores/adoption'
+import { useDebouncedRef } from '@/composables/useDebouncedRef'
+import AdoptionCard from '@/components/common/AdoptionCard.vue'
 
 const router = useRouter()
 const store = useAdoptionStore()
 
-const keyword = ref('')
+const { value: keyword, debounced: debouncedKeyword } = useDebouncedRef('')
 const statusFilter = ref<'全部' | AdoptionStatus>('全部')
 
-const statusList: ('全部' | AdoptionStatus)[] = ['全部', '待审核', '审核通过', '审核拒绝', '已完成']
+const statusList: ('全部' | AdoptionStatus)[] = ['全部', '待审核', '已通过', '已驳回']
 
 const filtered = computed(() => {
   let list = store.myAdoptions
 
-  if (keyword.value.trim()) {
-    const kw = keyword.value.trim().toLowerCase()
+  if (debouncedKeyword.value.trim()) {
+    const kw = debouncedKeyword.value.trim().toLowerCase()
     list = list.filter((a) => a.petName.toLowerCase().includes(kw) || a.applicantName.includes(kw))
   }
 
@@ -32,17 +33,7 @@ const filtered = computed(() => {
   return list
 })
 
-function statusTag(status: AdoptionStatus) {
-  const map: Record<AdoptionStatus, { type: string; text: string }> = {
-    待审核: { type: 'warning', text: '待审核' },
-    审核通过: { type: 'success', text: '审核通过' },
-    审核拒绝: { type: 'danger', text: '审核未通过' },
-    已完成: { type: 'primary', text: '已领养' },
-  }
-  return map[status]
-}
-
-async function cancel(id: number) {
+async function handleCancel(id: number) {
   try {
     await ElMessageBox.confirm('确定要撤销这条申请吗？撤销后需要重新提交。', '撤销确认', {
       type: 'warning',
@@ -54,8 +45,8 @@ async function cancel(id: number) {
   }
 }
 
-function goHome() {
-  router.push('/')
+function handleReapply() {
+  router.push('/home')
 }
 </script>
 
@@ -64,17 +55,12 @@ function goHome() {
     <!-- 标题栏 -->
     <div class="page-header">
       <h2 class="page-title">我的领养申请</h2>
-      <el-button type="primary" @click="goHome">+ 去领养</el-button>
     </div>
 
     <!-- 筛选 -->
     <div class="filter-bar">
       <div class="search-box">
-        <el-input v-model="keyword" placeholder="搜索宠物名字 / 申请人" clearable>
-          <template #prefix>
-            <el-icon><Search /></el-icon>
-          </template>
-        </el-input>
+        <el-input v-model="keyword" placeholder="搜索宠物名字 / 申请人" clearable />
       </div>
 
       <div class="status-tabs">
@@ -94,47 +80,21 @@ function goHome() {
       </div>
     </div>
 
-    <!-- 申请列表 -->
+    <!-- 申请列表：一排两个，使用 AdoptionCard 组件 -->
     <div v-if="filtered.length > 0" class="adoption-list">
-      <div v-for="a in filtered" :key="a.id" class="adoption-card">
-        <div class="card-left">
-          <img :src="a.petCover" :alt="a.petName" class="pet-cover" />
-        </div>
-
-        <div class="card-center">
-          <div class="pet-name">🐾 {{ a.petName }}</div>
-          <div class="apply-info">
-            <div>👤 {{ a.applicantName }} · 📞 {{ a.applicantPhone }}</div>
-            <div>📍 {{ a.address }}</div>
-            <div>📅 申请时间：{{ a.createdAt }}</div>
-          </div>
-          <div class="apply-reason"><strong>领养理由：</strong>{{ a.adoptionReason }}</div>
-          <div v-if="a.rejectReason" class="reject-reason">❌ 拒绝原因：{{ a.rejectReason }}</div>
-        </div>
-
-        <div class="card-right">
-          <el-tag :type="statusTag(a.status).type as any" effect="dark" class="status-tag">
-            {{ statusTag(a.status).text }}
-          </el-tag>
-          <div class="petty-note">
-            住房：{{ a.houseType }} · 养宠经验：{{ a.hasPetBefore ? '有' : '无' }}
-          </div>
-          <div v-if="a.status === '待审核'" class="card-actions">
-            <el-button size="small" type="danger" plain @click="cancel(a.id)"> 撤销申请 </el-button>
-          </div>
-          <div v-else-if="a.status === '审核拒绝'" class="card-actions">
-            <el-button size="small" @click="goHome">重新申请</el-button>
-          </div>
-        </div>
-      </div>
+      <AdoptionCard
+        v-for="a in filtered"
+        :key="a.id"
+        :adoption="a"
+        @cancel="handleCancel"
+        @reapply="handleReapply"
+      />
     </div>
 
     <!-- 空状态 -->
     <div v-else class="empty-state">
-      <div class="empty-icon">🐾</div>
       <div class="empty-text">暂无申请记录</div>
-      <div class="empty-hint">去宠物列表页看看有哪些毛孩子在等你~</div>
-      <el-button type="primary" @click="goHome">去领养</el-button>
+      <div class="empty-hint">去宠物列表页看看有哪些宠物在等你~</div>
     </div>
   </div>
 </template>
@@ -207,92 +167,11 @@ function goHome() {
   opacity: 0.75;
 }
 
-/* ===== 列表卡片 ===== */
+/* ===== 列表：一排两个 Grid ===== */
 .adoption-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-}
-
-.adoption-card {
-  background: var(--color-white);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-sm);
-  padding: 20px;
-  display: flex;
-  gap: 20px;
-}
-
-.card-left .pet-cover {
-  width: 120px;
-  height: 120px;
-  border-radius: 12px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.card-center {
-  flex: 1;
-  min-width: 0;
-}
-
-.pet-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 10px;
-}
-
-.apply-info {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.apply-reason {
-  font-size: 13px;
-  color: var(--color-text-regular);
-  background: var(--color-secondary);
-  padding: 10px 14px;
-  border-radius: 8px;
-  line-height: 1.6;
-  margin-bottom: 8px;
-}
-
-.reject-reason {
-  font-size: 13px;
-  color: var(--color-white);
-  background: var(--color-danger);
-  padding: 10px 14px;
-  border-radius: 8px;
-  line-height: 1.6;
-}
-
-.card-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 140px;
-}
-
-.status-tag {
-  font-size: 13px;
-}
-
-.petty-note {
-  font-size: 11px;
-  color: var(--color-text-secondary);
-  text-align: right;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
 }
 
 /* ===== 空状态 ===== */
@@ -304,11 +183,6 @@ function goHome() {
   box-shadow: var(--shadow-sm);
 }
 
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
 .empty-text {
   font-size: 16px;
   color: var(--color-text-primary);
@@ -318,6 +192,5 @@ function goHome() {
 .empty-hint {
   font-size: 13px;
   color: var(--color-text-secondary);
-  margin-bottom: 16px;
 }
 </style>
